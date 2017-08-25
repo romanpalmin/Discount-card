@@ -83,9 +83,6 @@
       }
     },
     mounted() {
-      console.log(this.isLoader);
-      console.log(this.alertText);
-      console.log(this.showButton);
     },
     props: ['isLoader', 'alertText', 'showButton', 'showAlert']
   }

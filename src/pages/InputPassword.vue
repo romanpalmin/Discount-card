@@ -13,7 +13,7 @@
       <div class="row-item prompt">
         <span v-if="showPrompt">Неправильный пароль</span>
       </div>
-      <modal v-if="showModal" :isLoader=true alertText="test" :showButton=true :showAlert=false />
+      <modal v-if="showModal" :isLoader=true :alertText="modalText" :showButton="modalButton" :showAlert="modalAlert" />
     </div>
   </div>
 </template>
@@ -76,6 +76,7 @@
   import InputMask from 'inputmask';
   import MaskedInput from 'vue-masked-input';
   import modal from '../components/modal.vue';
+  import store from '../store';
   export default {
     data() {
       return {
@@ -83,7 +84,10 @@
         showPrompt: false,
         passwordLength: 4,
         currentPassword: '',
-        showModal: false
+        showModal: false,
+        modalText: '',
+        modalButton: false,
+        modalAlert: false
       }
     },
     computed: {
@@ -123,7 +127,7 @@
       ajaxSend(numADM) {
         //http://10.100.50.248/planshet_kl/hs/cardreg?numADM=11112&check=1
         const params = {numADM, 'check': 1};
-
+        store.setNumADM(numADM);
         let url = `http://planshet:planshet@10.100.50.248/planshet_kl/hs/cardreg?`;
         for (let prm in params) {
           url += prm + '=' + params[prm] + '&';
