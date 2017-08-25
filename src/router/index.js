@@ -1,8 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Hello from '@/components/Hello';
 import InputPassword from '../pages/InputPassword.vue';
 import InputForm from '../pages/InputForm.vue';
+import Thanks from '../pages/Thanks.vue';
+
+
 
 Vue.use(Router);
 
@@ -10,8 +12,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Hello',
-      component: Hello
+      name: 'main',
+      component: InputPassword
     },
     {
       path: '/:lang/InputPassword',
@@ -19,11 +21,14 @@ export default new Router({
       component: InputPassword
     },
     {
-      path: '/:lang/InputForm',
+      path: '/:lang/InputForm/:numADM',
       name: 'InputForm',
       component: InputForm
-    }/*,
-    {name: 'order', path: '/:lang/order', component: order},*/
-
+    },
+    {
+      path: '/:lang/Thanks',
+      name: 'Thanks',
+      component: Thanks
+    }
   ]
 })

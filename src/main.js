@@ -3,6 +3,17 @@
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
+/*
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+Vue.use(VueAxios, axios)
+ */
+import axios from 'axios';
+import vueAxios from 'vue-axios';
+Vue.use(vueAxios, axios);
+
+import vueMask from 'v-mask';
+Vue.use(vueMask);
 
 Vue.config.productionTip = false;
 

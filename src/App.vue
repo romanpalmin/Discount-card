@@ -11,14 +11,14 @@
               <router-link to="/ru/InputForm" class="link-page link">Form</router-link>
             </div>
             <div class="pages-nav__item ">
-              <router-link to="/ru/3" class="link-page link">3</router-link>
+              <router-link to="/ru/Thanks" class="link-page link">Thanks</router-link>
             </div>
-            <div class="pages-nav__item ">
+           <!-- <div class="pages-nav__item ">
               <router-link to="/ru/4" class="link-page link">4</router-link>
             </div>
             <div class="pages-nav__item ">
               <router-link to="/ru/5" class="link-page link">5</router-link>
-            </div>
+            </div>-->
           </nav>
         </div>
       </menu>
@@ -36,11 +36,13 @@
 <style lang="less">
   @font-face {
     font-family: IntroHeader; /* Гарнитура шрифта */
-    src: url(../static/css/fonts/IntroRust-Base.otf); /* Путь к файлу со шрифтом */
+    src: url(http://10.100.50.248/fonts/IntroRust-Base.otf); /* Путь к файлу со шрифтом */
+    //src: url(../static/css/fonts/IntroRust-Base.otf); /* Путь к файлу со шрифтом */
+    //src: url(http://10.10.182.11/images/IntroRust-Base.otf); /* Путь к файлу со шрифтом */
   }
 
   body {
-    background: url("../static/img/background.jpg") #1d1e21 center no-repeat;
+    background: url("http://10.10.182.11/images/background.jpg") #1d1e21 center no-repeat;
   }
 
   #app {
@@ -58,6 +60,7 @@
       z-index: 9999;
       background-color: black;
       .menu {
+        display: none;
         .pages-nav {
           display: flex;
           -webkit-flex-wrap: wrap;
@@ -93,6 +96,7 @@
         line-height: 80px;
         border-radius: 15px 15px 0 0;
         padding-top: 10px;
+        color: #484848;
       }
       width: 80%;
       min-height: 900px;
@@ -108,14 +112,14 @@
         border: 5px solid white;
         color: white;
         .bg {
-          background: url("../static/img/inner-bg-crop.png") white;
+          background: url("http://10.10.182.11/images/bg-dark.png") white;
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
           z-index: -1;
-          opacity: 0.4;
+          /*opacity: 0.4;*/
           background-size: cover;
         }
       }
@@ -125,13 +129,8 @@
 </style>
 
 <script>
-  import test from './components/Hello.vue';
-
   export default {
     name: 'app',
-    components: {
-      test
-    }
   }
 </script>
 
