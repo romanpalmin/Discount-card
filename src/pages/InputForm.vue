@@ -75,7 +75,13 @@
         <button :class="sendButtonClass" @click="sendData()">Получить карту</button>
       </div>
     </div>
-    <modal v-if="showModal" :isLoader=true alertText="test" :showButton=true :showAlert=false />
+    <modal v-if="showModal"
+           :isLoader=true
+           :alertText="modalText"
+           :alertTitle="modalTitle"
+           :showButton="modalButton"
+           :showAlert="modalAlert"
+    />
   </div>
 </template>
 <style scoped lang="less">
@@ -223,7 +229,11 @@
         acceptSMS: true,
         acceptTranslations: true,
         imgBase64: 1,
-        showModal: false
+        showModal: false,
+        modalText: '',
+        modalTitle: '',
+        modalButton: false,
+        modalAlert: false
       }
     },
     components: {
@@ -348,10 +358,14 @@
             }
           })
           .catch(err => {
-            console.log(err);
+            this.modalAlert = true;
+            this.modalText = 'Ошибка передачи данных.\nОбратитесь к администратору';
+            this.modalTitle = 'Ошибка';
+            this.modalButton = true;
+            this.showModal = true;
             //todo закомментировать
             let pathName = 'InputSMS';
-            this.$router.replace({name: pathName, params: {lang: 'ru'}});
+            //this.$router.replace({name: pathName, params: {lang: 'ru'}});
           });
         const config = {headers: {'Content-Type': 'multipart/form-data'}};
         url = `http://planshet:planshet@10.100.50.248/planshet_kl/hs/cardreg?test=1`;
@@ -367,9 +381,14 @@
           })
           .catch(err => {
             console.log(err);
+            if (!this.showModal) {
+              this.modalAlert = true;
+              this.modalText = 'Ошибка передачи фотографии.\nОбратитесь к администратору';
+              this.modalTitle = 'Ошибка';
+              this.modalButton = true;
+              this.showModal = true;
+            }
           })
-
-
       },
       b64toBlob(b64Data, contentType, sliceSize) {
         contentType = contentType || '';

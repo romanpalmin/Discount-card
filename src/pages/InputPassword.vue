@@ -152,14 +152,14 @@
             }
           })
           .catch(err => {
-            console.log(err);
+            this.showModal = false;
             this.modalAlert = true;
             this.modalText = 'Обратитесь к администратору';
             this.modalTitle = 'Ошибка';
             this.modalButton = true;
             this.showModal = true;
             // todo удалить
-            //let pathName = 'InputForm';
+            let pathName = 'InputForm';
             //this.$router.replace({name: pathName, params: {lang: 'ru', numADM: numADM}});
           })
 
