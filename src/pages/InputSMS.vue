@@ -2,10 +2,10 @@
   <div>
     <div class="password-page-content">
       <div class="row-item title">
-        ВВЕДИТЕ ПАРОЛЬ ИЗ SMS:
+        ВВЕДИТЕ КОД ИЗ SMS:
       </div>
       <div class="row-item input">
-        <input id="password" type="number" class="password-input" v-mask="'####'"  placeholder="_ _ _ _" v-model="currentPassword"/>
+        <input id="password" type="number" class="password-input"  v-model="currentPassword"/>
       </div>
       <div class="row-item button">
         <button :class="continueButtonClass" @click="send()">продолжить</button>
@@ -88,7 +88,7 @@
     },
     computed: {
       isReadyButton: function () {
-        return this.smsCode.length === this.passwordLength || this.smsCode.length === this.passwordLength - 1;
+        return this.smsCode.length !== '';//=== this.passwordLength || this.smsCode.length === this.passwordLength - 1;
       },
       continueButtonClass: function () {
         return this.isReadyButton ? 'ready' : 'not-ready';
@@ -112,8 +112,8 @@
     },
     methods: {
       send() {
-        if (!(isNaN(this.smsCode)) && (
-            this.smsCode.toString().length === this.passwordLength || this.smsCode.toString().length === this.passwordLength - 1)) {
+        if (!(isNaN(this.smsCode)) && (this.smsCode.toString().length !== '')){
+        //=== this.passwordLength || this.smsCode.toString().length === this.passwordLength - 1)) {
           this.ajaxSend(this.smsCode);
         } else {
           console.log('Введено недостаточно символов');
@@ -121,14 +121,15 @@
       },
 
       ajaxSend(smsCode) {
+        const numADM = this.$router.currentRoute.params.numADM;
         //http://10.100.50.248/planshet_kl/hs/cardreg?numADM=11112&check=1
-        const params = {smsCode: smsCode, 'check': 1};
+        const params = {codSMS: smsCode, 'check': 1, numADM};
 
         let url = `http://planshet:planshet@10.100.50.248/planshet_kl/hs/cardreg?`;
         for (let prm in params) {
           url += prm + '=' + params[prm] + '&';
         }
-        url += 'image=1';
+
         console.log(url);
         this.showModal = true;
         this.axios.post(url, {data: ''})

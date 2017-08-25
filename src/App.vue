@@ -13,6 +13,9 @@
             <div class="pages-nav__item ">
               <router-link to="/ru/Thanks" class="link-page link">Thanks</router-link>
             </div>
+            <div class="pages-nav__item ">
+              <router-link to="/ru/InputSMS" class="link-page link">SMS</router-link>
+            </div>
            <!-- <div class="pages-nav__item ">
               <router-link to="/ru/4" class="link-page link">4</router-link>
             </div>

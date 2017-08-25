@@ -27,7 +27,7 @@ export default new Router({
       component: InputForm
     },
     {
-      path: '/:lang/InputSMS',
+      path: '/:lang/InputSMS/:numADM',
       name: 'InputSMS',
       component: InputSMS
     },
