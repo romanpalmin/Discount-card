@@ -9,10 +9,12 @@
       </div>
       <div class="row-item button">
         <button :class="continueButtonClass" @click="send()">продолжить</button>
+        <br/><button @click="showModal = !showModal">Открыть модальное окно</button>
       </div>
       <div class="row-item prompt">
         <span v-if="showPrompt">Неправильный пароль</span>
       </div>
+      <modal v-if="showModal" :isLoader=true alertText="test" :showButton=true :showAlert=false />
     </div>
   </div>
 </template>
@@ -74,13 +76,15 @@
 <script>
   import InputMask from 'inputmask';
   import MaskedInput from 'vue-masked-input';
+  import modal from '../components/modal.vue';
   export default {
     data() {
       return {
         name: 'this component',
         showPrompt: false,
         passwordLength: 4,
-        currentPassword: ''
+        currentPassword: '',
+        showModal: false
       }
     },
     computed: {
@@ -104,7 +108,8 @@
       //passwordMask.mask(password);
     },
     components:{
-      'masked-input': MaskedInput
+      'masked-input': MaskedInput,
+      modal
     },
     methods: {
       send() {
@@ -126,16 +131,19 @@
         }
         url += 'image=1';
         console.log(url);
+        this.showModal = true;
         this.axios.post(url, {data: ''})
           .then(resp => {
             console.log(resp);
             if (resp.status === 200) {
+              this.showModal = false;
               let pathName = 'InputForm';
               this.$router.replace({name: pathName, params: {lang: 'ru', numADM: numADM}});
             }
           })
           .catch(err => {
             console.log(err);
+            this.showModal = false;
             // todo удалить
             let pathName = 'InputForm';
             this.$router.replace({name: pathName, params: {lang: 'ru', numADM: numADM}});
