@@ -5,10 +5,9 @@
     </div>
     <div class="main-modal" v-if="showAlert">
       <div class="modal-page-content">
-        <div class="header1">{{showTitle}}</div>
+        <div class="header1" v-if="title && title.length > 0">{{title}}</div>
         <hr/>
         <div class="header2">
-
         </div>
         <div class="modal-buttons" v-if="showCallbackButton">
           <button>ОК</button>
@@ -79,7 +78,7 @@
       showCallbackButton: function () {
         return this.showButton;
       },
-      showTitle: function () {
+      title: function () {
         return this.alertText;
       }
     },

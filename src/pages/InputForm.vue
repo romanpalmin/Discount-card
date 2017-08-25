@@ -9,13 +9,13 @@
       <div class="row-item">
         <div class="title">Фамилия</div>
         <div class="input">
-          <input class="input" name="firstName" id="firstName" v-model="firstName" />
+          <input class="input" name="firstName" id="firstName" v-model="firstName"/>
         </div>
       </div>
       <div class="row-item">
         <div class="title">Имя</div>
         <div class="input">
-          <input class="input" name="name" id="name" v-model="name" />
+          <input class="input" name="name" id="name" v-model="name"/>
         </div>
       </div>
       <div class="row-item">
@@ -27,13 +27,15 @@
       <div class="row-item">
         <div class="title">Дата рождения</div>
         <div class="input">
-          <input class="input" name="birthday" id="birthday" v-model="birthday"  v-mask="'##.##.####'"  placeholder="_ _ . _ _ . _ _ _ _"/>
+          <input class="input" name="birthday" id="birthday" v-model="birthday" v-mask="'##.##.####'"
+                 placeholder="_ _ . _ _ . _ _ _ _"/>
         </div>
       </div>
       <div class="row-item">
         <div class="title">Телефон</div>
         <div class="input">
-          <input class="input" name="phone" id="phone" v-model="phone"  v-mask="'+7(###)###-##-##'"  placeholder="+7 (_ _ _) _ _ _ - _ _ - _ _"/>
+          <input class="input" name="phone" id="phone" v-model="phone" v-mask="'+7(###)###-##-##'"
+                 placeholder="+7 (_ _ _) _ _ _ - _ _ - _ _"/>
         </div>
       </div>
       <div class="row-item">
@@ -267,12 +269,16 @@
         return [this.name, this.firstName, this.birthday];
       },
       collectData() {
+        let tel = this.phone;
+        if (tel.substr(0, 2) === '+7') {
+          tel = ('8' + tel.substr(2, tel.length)).replace(/[^0-9]/g, "");
+        }
         const name = this.name;
         const firstName = this.firstName;
         const middleName = this.middleName;
         const email = this.email;
         const birthday = this.birthday;
-        const phone = this.phone;
+        const phone = tel;
         const fromwhere = this.fromwhere;
         const acceptSMS = this.acceptSMS;
         const acceptTranslations = this.acceptTranslations;
@@ -301,9 +307,7 @@
       },
 
       ajaxSendData(obj) {
-        console.log(this.$router);
         const numADM = this.$router.currentRoute.params.numADM;
-        console.log(numADM);
         obj.numADM = numADM;
         const params = obj;
         console.log(params);
@@ -311,9 +315,8 @@
         for (let prm in params) {
           url += prm + '=' + params[prm] + '&';
         }
-        //console.log(url);
         //url += 'image=1';
-        this.axios.post(url, {data: ''})
+        /*this.axios.post(url, {data: ''})
           .then(resp => {
             console.log(resp);
             if (resp.status === 200) {
@@ -324,7 +327,7 @@
           })
           .catch(err => {
             console.log(err);
-          })
+          })*/
       }
 
     },
