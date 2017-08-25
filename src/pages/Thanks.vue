@@ -29,7 +29,7 @@
           setTimeout(()=>{
             let pathName = 'InputPassword';
             this.$router.replace({name: pathName, params: { lang: 'ru' }});
-          }, 10000)
+          }, 5000)
         }
     }
 </script>

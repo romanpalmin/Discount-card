@@ -2,7 +2,7 @@
   <div>
     <div class="password-page-content">
       <div class="row-item title">
-        ВВЕДИТЕ ПАРОЛЬ:
+        ВВЕДИТЕ ПАРОЛЬ ИЗ SMS:
       </div>
       <div class="row-item input">
         <input id="password" type="number" class="password-input" v-mask="'####'"  placeholder="_ _ _ _" v-model="currentPassword"/>
@@ -88,12 +88,12 @@
     },
     computed: {
       isReadyButton: function () {
-        return this.numADM.length === this.passwordLength || this.numADM.length === this.passwordLength - 1;
+        return this.smsCode.length === this.passwordLength || this.smsCode.length === this.passwordLength - 1;
       },
       continueButtonClass: function () {
         return this.isReadyButton ? 'ready' : 'not-ready';
       },
-      numADM: function () {
+      smsCode: function () {
         let password = this.currentPassword;
         password = password.replace(/\s+/g, '');
         password = password.replace(/_+/g, '');
@@ -112,17 +112,17 @@
     },
     methods: {
       send() {
-        if (!(isNaN(this.numADM)) && (
-            this.numADM.toString().length === this.passwordLength || this.numADM.toString().length === this.passwordLength - 1)) {
-          this.ajaxSend(this.numADM);
+        if (!(isNaN(this.smsCode)) && (
+            this.smsCode.toString().length === this.passwordLength || this.smsCode.toString().length === this.passwordLength - 1)) {
+          this.ajaxSend(this.smsCode);
         } else {
           console.log('Введено недостаточно символов');
         }
       },
 
-      ajaxSend(numADM) {
+      ajaxSend(smsCode) {
         //http://10.100.50.248/planshet_kl/hs/cardreg?numADM=11112&check=1
-        const params = {numADM, 'check': 1};
+        const params = {smsCode: smsCode, 'check': 1};
 
         let url = `http://planshet:planshet@10.100.50.248/planshet_kl/hs/cardreg?`;
         for (let prm in params) {
@@ -133,18 +133,19 @@
         this.showModal = true;
         this.axios.post(url, {data: ''})
           .then(resp => {
-            this.showModal = false;
             console.log(resp);
             if (resp.status === 200) {
-              let pathName = 'InputForm';
-              this.$router.replace({name: pathName, params: {lang: 'ru', numADM: numADM}});
+              this.showModal = false;
+              let pathName = 'Thanks';
+              this.$router.replace({name: pathName, params: {lang: 'ru'}});
             }
           })
           .catch(err => {
             console.log(err);
+            this.showModal = false;
             // todo удалить
-            let pathName = 'InputForm';
-            this.$router.replace({name: pathName, params: {lang: 'ru', numADM: numADM}});
+            let pathName = 'Thanks';
+            this.$router.replace({name: pathName, params: {lang: 'ru'}});
           })
 
       }

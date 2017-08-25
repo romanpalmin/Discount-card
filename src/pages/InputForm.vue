@@ -26,22 +26,22 @@
       </div>
       <div class="row-item">
         <div class="title">Дата рождения</div>
-        <div class="input">
-          <input class="input" name="birthday" id="birthday" v-model="birthday" v-mask="'##.##.####'"
+        <div class="input"><!--v-mask="'##.##.####'"-->
+          <input class="input" type="date" name="birthday" id="birthday" v-model="birthday"
                  placeholder="_ _ . _ _ . _ _ _ _"/>
         </div>
       </div>
       <div class="row-item">
         <div class="title">Телефон</div>
-        <div class="input">
-          <input class="input" name="phone" id="phone" v-model="phone" v-mask="'+7(###)###-##-##'"
+        <div class="input"><!--v-mask="'+7(###)###-##-##'"-->
+          <input class="input" name="phone" id="phone" type="tel" v-model="phone"
                  placeholder="+7 (_ _ _) _ _ _ - _ _ - _ _"/>
         </div>
       </div>
       <div class="row-item">
         <div class="title">E-mail</div>
         <div class="input">
-          <input class="input" name="email" id="email" v-model="email"/>
+          <input class="input" type="email" name="email" id="email" v-model="email"/>
         </div>
       </div>
       <div class="row-item">
@@ -75,6 +75,7 @@
         <button :class="sendButtonClass" @click="sendData()">Получить карту</button>
       </div>
     </div>
+    <modal v-if="showModal" :isLoader=true alertText="test" :showButton=true :showAlert=false />
   </div>
 </template>
 <style scoped lang="less">
@@ -205,6 +206,7 @@
 </style>
 <script>
   import InputMask from 'inputmask';
+  import modal from '../components/modal.vue';
 
   export default {
     data() {
@@ -213,13 +215,14 @@
         name: 'Петр',
         middleName: 'Петрович',
         birthday: '12.01.1995',
-        phone: '9213395234',
+        phone: '89117606036',
         email: 'petrov@mail.ru',
         fromwhere: 'Оттуда',
         translations: 'Eurosport',
         acceptSMS: true,
         acceptTranslations: true,
-        imgBase64: 0
+        imgBase64: 1,
+        showModal: false
       }
     },
     computed: {
@@ -227,7 +230,7 @@
         const src = this.getReqFields();
         if (src.length === 0) return false;
         let dest = src.filter((item) => {
-          return item !== '';
+          return item.toString() !== '';
         });
         return dest.length === src.length;
       },
@@ -236,6 +239,16 @@
       }
     },
     methods: {
+      formatDate(date){
+        let month = String(date.getMonth() + 1);
+        let day = String(date.getDate());
+        const year = String(date.getFullYear());
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+
+        return `${day}.${month}.${year}`;
+      },
       getPhoto() {
         let src = 'http://10.10.182.11/images/camera.png';
         return src;
@@ -271,14 +284,14 @@
       collectData() {
         let tel = this.phone;
         if (tel.substr(0, 2) === '+7') {
-          tel = ('8' + tel.substr(2, tel.length)).replace(/[^0-9]/g, "");
+          tel = ('8' + tel.substr(2, tel.length));
         }
         const name = this.name;
         const firstName = this.firstName;
         const middleName = this.middleName;
         const email = this.email;
-        const birthday = this.birthday;
-        const phone = tel;
+        const birthday = this.formatDate(new Date(this.birthday));
+        const phone = tel.replace(/[^0-9]/g, "");
         const fromwhere = this.fromwhere;
         const acceptSMS = this.acceptSMS;
         const acceptTranslations = this.acceptTranslations;
@@ -299,8 +312,8 @@
 
       sendData() {
         if (this.isShowSendButton) {
-          console.log(this.collectData());
           this.ajaxSendData(this.collectData());
+          this.showModal = true;
         } else {
           console.log('Не заполнены обязательные поля');
         }
@@ -311,23 +324,27 @@
         obj.numADM = numADM;
         const params = obj;
         console.log(params);
-        let url = `http://planshet:planshet@10.100.50.248/planshet_kl/hs/cardreg?`;
+        let url = `http://planshet:planshet@10.100.50.248/planshet_kl/hs/cardreg111?`;
         for (let prm in params) {
           url += prm + '=' + params[prm] + '&';
         }
         //url += 'image=1';
-        /*this.axios.post(url, {data: ''})
+        this.axios.post(url, {data: ''})
           .then(resp => {
+            this.showModal = false;
             console.log(resp);
             if (resp.status === 200) {
-              let pathName = 'Thanks';
+              let pathName = 'InputSMS';
               //todo раскомментировать
-              //this.$router.replace({name: pathName, params: {lang: 'ru'}});
+              this.$router.replace({name: pathName, params: {lang: 'ru'}});
             }
           })
           .catch(err => {
             console.log(err);
-          })*/
+            //todo закомментировать
+            let pathName = 'InputSMS';
+            this.$router.replace({name: pathName, params: {lang: 'ru'}});
+          })
       }
 
     },

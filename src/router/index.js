@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import InputPassword from '../pages/InputPassword.vue';
 import InputForm from '../pages/InputForm.vue';
+import InputSMS from '../pages/InputSMS.vue';
 import Thanks from '../pages/Thanks.vue';
 
 
@@ -24,6 +25,11 @@ export default new Router({
       path: '/:lang/InputForm/:numADM',
       name: 'InputForm',
       component: InputForm
+    },
+    {
+      path: '/:lang/InputSMS',
+      name: 'InputSMS',
+      component: InputSMS
     },
     {
       path: '/:lang/Thanks',
