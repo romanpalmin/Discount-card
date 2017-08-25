@@ -8,8 +8,9 @@
         <div class="header1" v-if="title && title.length > 0">{{title}}</div>
         <hr/>
         <div class="header2">
+          {{message}}
         </div>
-        <div class="modal-buttons" v-if="showCallbackButton">
+        <div class="modal-buttons" v-if="showCallbackButton" @click="accept()">
           <button>ОК</button>
         </div>
       </div>
@@ -39,7 +40,7 @@
     z-index: 9991;
     .modal-page-content {
       opacity: 1;
-      width: 50%;
+      width: 70%;
       border-radius: 16px;
       border: 5px solid #383737;
       margin: 35% auto 0;
@@ -74,16 +75,28 @@
         name: 'this component',
       }
     },
+    methods:{
+      accept(){
+        this.$parent.showModal = false;
+        this.$parent.modalAlert = false;
+        this.$parent.modalText = '';
+        this.$parent.modalTitle = '';
+        this.$parent.modalButton = false;
+      }
+    },
     computed: {
       showCallbackButton: function () {
         return this.showButton;
       },
       title: function () {
+        return this.alertTitle;
+      },
+      message: function(){
         return this.alertText;
       }
     },
     mounted() {
     },
-    props: ['isLoader', 'alertText', 'showButton', 'showAlert']
+    props: ['isLoader', 'alertText', 'showButton', 'showAlert', 'alertTitle']
   }
 </script>

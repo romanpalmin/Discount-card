@@ -13,7 +13,13 @@
       <div class="row-item prompt">
         <span v-if="showPrompt">Неправильный пароль</span>
       </div>
-      <modal v-if="showModal" :isLoader=true :alertText="modalText" :showButton="modalButton" :showAlert="modalAlert" />
+      <modal v-if="showModal"
+             :isLoader=true
+             :alertText="modalText"
+             :alertTitle="modalTitle"
+             :showButton="modalButton"
+             :showAlert="modalAlert"
+      />
     </div>
   </div>
 </template>
@@ -86,6 +92,7 @@
         currentPassword: '',
         showModal: false,
         modalText: '',
+        modalTitle: '',
         modalButton: false,
         modalAlert: false
       }
@@ -146,9 +153,14 @@
           })
           .catch(err => {
             console.log(err);
+            this.modalAlert = true;
+            this.modalText = 'Обратитесь к администратору';
+            this.modalTitle = 'Ошибка';
+            this.modalButton = true;
+            this.showModal = true;
             // todo удалить
-            let pathName = 'InputForm';
-            this.$router.replace({name: pathName, params: {lang: 'ru', numADM: numADM}});
+            //let pathName = 'InputForm';
+            //this.$router.replace({name: pathName, params: {lang: 'ru', numADM: numADM}});
           })
 
       }
