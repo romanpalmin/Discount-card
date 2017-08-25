@@ -5,7 +5,10 @@
         ВВЕДИТЕ ПАРОЛЬ:
       </div>
       <div class="row-item input">
-        <input id="password" type="number" class="password-input" v-mask="'####'"  placeholder="_ _ _ _" v-model="currentPassword"/>
+        <input id="password" type="number" class="password-input" v-mask="'####'" placeholder="_ _ _ _"
+               v-model="currentPassword"/>
+        <div class="password-input block" @click="setFocus()" v-model="shownPass">{{shownPass}}</div>
+        <input type="number" class="hidden" id="passHidden" v-model="hiddenPass"/>
       </div>
       <div class="row-item button">
         <button :class="continueButtonClass" @click="send()">продолжить</button>
@@ -33,8 +36,11 @@
         letter-spacing: 1px;
         font-family: IntroHeader;
       }
+      .hidden{
+        opacity: 0;
+      }
       &.input {
-        input {
+        input, div {
           height: 40pt;
           border: 3px solid #cbcbcb;
           border-radius: 8px;
@@ -45,6 +51,10 @@
           color: white;
           font-size: 25pt;
           font-weight: 900;
+          &.block {
+            margin: 0 auto;
+          }
+
         }
       }
       &.button {
@@ -83,6 +93,7 @@
   import MaskedInput from 'vue-masked-input';
   import modal from '../components/modal.vue';
   import store from '../store';
+
   export default {
     data() {
       return {
@@ -90,6 +101,7 @@
         showPrompt: false,
         passwordLength: 4,
         currentPassword: '',
+        hiddenPass: '',
         showModal: false,
         modalText: '',
         modalTitle: '',
@@ -109,6 +121,31 @@
         password = password.replace(/\s+/g, '');
         password = password.replace(/_+/g, '');
         return password;
+      },
+      shownPass: function () {
+        const currentPass = this.hiddenPass;
+        let resPass = '';
+        switch (currentPass.length) {
+          case 0:
+            resPass = `_ _ _ _`;
+            break;
+          case 1:
+            resPass = `${currentPass[0]} _ _ _`;
+            break;
+          case 2:
+            resPass = `${currentPass[0]} ${currentPass[1]} _ _`;
+            break;
+          case 3:
+            resPass = `${currentPass[0]} ${currentPass[1]} ${currentPass[2]} _`;
+            break;
+          case 4:
+            resPass = `${currentPass[0]} ${currentPass[1]} ${currentPass[2]} ${currentPass[3]}`;
+            break;
+          default:
+            resPass = `_ _ _ _`;
+            break;
+        }
+        return resPass;
       }
     },
     mounted() {
@@ -117,11 +154,18 @@
       const password = document.getElementById("password");
       //passwordMask.mask(password);
     },
-    components:{
+    components: {
       'masked-input': MaskedInput,
       modal
     },
     methods: {
+      formatPass(pass) {
+
+      },
+      setFocus() {
+        const el = document.getElementById('passHidden');
+        el.focus();
+      },
       send() {
         if (!(isNaN(this.numADM)) && (
             this.numADM.toString().length === this.passwordLength || this.numADM.toString().length === this.passwordLength - 1)) {
