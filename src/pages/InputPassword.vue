@@ -7,8 +7,8 @@
       <div class="row-item input">
         <input id="password" type="number" class="password-input" v-mask="'####'" placeholder="_ _ _ _"
                v-model="currentPassword"/>
-        <div class="password-input block" @click="setFocus()" v-model="shownPass">{{shownPass}}</div>
-        <input type="number" class="hidden" id="passHidden" v-model="hiddenPass"/>
+       <!-- <div class="password-input block" @click="setFocus()" v-model="shownPass">{{shownPass}}</div>
+        <input type="number" class="hidden" id="passHidden" v-model="hiddenPass"/>-->
       </div>
       <div class="row-item button">
         <button :class="continueButtonClass" @click="send()">продолжить</button>
@@ -192,7 +192,15 @@
             console.log(resp);
             if (resp.status === 200) {
               let pathName = 'InputForm';
-              this.$router.replace({name: pathName, params: {lang: 'ru', numADM: numADM}});
+              if (resp.data === 1) {
+                this.$router.replace({name: pathName, params: {lang: 'ru', numADM: numADM}});
+              } else {
+                this.modalAlert = true;
+                this.modalText = 'Неправильный пароль';
+                this.modalTitle = 'Ошибка';
+                this.modalButton = true;
+                this.showModal = true;
+              }
             }
           })
           .catch(err => {
