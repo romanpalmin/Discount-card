@@ -39,9 +39,9 @@
 <style lang="less">
   @font-face {
     font-family: IntroHeader; /* Гарнитура шрифта */
-    src: url(http://10.100.50.248/fonts/IntroRust-Base.otf); /* Путь к файлу со шрифтом */
+    //src: url(http://10.100.50.248/fonts/IntroRust-Base.otf); /* Путь к файлу со шрифтом */
     //src: url(../static/css/fonts/IntroRust-Base.otf); /* Путь к файлу со шрифтом */
-    //src: url(http://10.10.182.11/images/IntroRust-Base.otf); /* Путь к файлу со шрифтом */
+    src: url(http://10.10.182.11/fonts/IntroRust-Base.otf); /* Путь к файлу со шрифтом */
   }
 
   body {
@@ -63,7 +63,7 @@
       z-index: 9999;
       background-color: black;
       .menu {
-        /*display: none;*/
+        display: none;
         .pages-nav {
           display: flex;
           -webkit-flex-wrap: wrap;
@@ -104,7 +104,7 @@
       width: 80%;
       min-height: 900px;
       display: block;
-      margin: 100px auto;
+      margin: 30px auto;
       border-radius: 4px;
       color: black;
       .inner-page {

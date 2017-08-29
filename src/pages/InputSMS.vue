@@ -76,6 +76,7 @@
   import InputMask from 'inputmask';
   import MaskedInput from 'vue-masked-input';
   import modal from '../components/modal.vue';
+  import store from '../store';
   export default {
     data() {
       return {
@@ -124,8 +125,10 @@
         const numADM = this.$router.currentRoute.params.numADM;
         //http://10.100.50.248/planshet_kl/hs/cardreg?numADM=11112&check=1
         const params = {codSMS: smsCode, 'check': 1, numADM};
+        const ip = store.state.ip;
+        const ws = store.state.ws;
 
-        let url = `http://planshet:planshet@10.100.50.248/planshet_kl/hs/cardreg?`;
+        let url = `http://planshet:planshet@${ip}/${ws}/hs/cardreg?`;
         for (let prm in params) {
           url += prm + '=' + params[prm] + '&';
         }

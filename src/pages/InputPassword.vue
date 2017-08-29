@@ -192,8 +192,10 @@
       ajaxSend(numADM) {
         //http://10.100.50.248/planshet_kl/hs/cardreg?numADM=11112&check=1
         const params = {numADM, 'check': 1};
+        const ip = store.state.ip;
+        const ws = store.state.ws;
         store.setNumADM(numADM);
-        let url = `http://planshet:planshet@10.100.50.248/planshet_kl/hs/cardreg?`;
+        let url = `http://planshet:planshet@${ip}/${ws}/hs/cardreg?`;
         for (let prm in params) {
           url += prm + '=' + params[prm] + '&';
         }

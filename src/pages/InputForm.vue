@@ -24,18 +24,32 @@
           <input class="input" name="middleName" id="middleName" v-model="middleName"/>
         </div>
       </div>
-      <div class="row-item">
-        <div class="title">Дата рождения</div>
-        <div class="input"><!--v-mask="'##.##.####'"-->
+     <!-- <div class="row-item">
+        <div class="title">Дата рождения0</div>
+        <div class="input">&lt;!&ndash;v-mask="'##.##.####'"&ndash;&gt;
           <input class="input" type="date" name="birthday" id="birthday" v-model="birthday"
                  placeholder="_ _ . _ _ . _ _ _ _"/>
         </div>
-      </div>
+      </div>-->
       <div class="row-item">
+        <div class="title">Дата рождения</div>
+        <div class="input">
+          <div class="birthdate-input block" @click="setFocus('birthday')" v-model="shownBirthday">{{shownBirthday}}</div>
+          <input class="input hidden-input" type="number" name="birthday" id="hiddenBirthday" v-model="hiddenBirthday"/>
+        </div>
+      </div>
+      <!--<div class="row-item">
         <div class="title">Телефон</div>
-        <div class="input"><!--v-mask="'+7(###)###-##-##'"-->
+        <div class="input">&lt;!&ndash;v-mask="'+7(###)###-##-##'"&ndash;&gt;
           <input class="input" name="phone" id="phone" type="tel" v-model="phone"
                  placeholder="+7 (_ _ _) _ _ _ - _ _ - _ _"/>
+        </div>
+      </div>-->
+      <div class="row-item">
+        <div class="title">Телефон</div>
+        <div class="input">
+          <div class="phone-input block" @click="setFocus('phone')" v-model="shownPhone">{{shownPhone}}</div>
+          <input class="input hidden-input" name="phone" id="hiddenPhone" type="number" v-model="hiddenPhone" />
         </div>
       </div>
       <div class="row-item">
@@ -97,7 +111,7 @@
         font-size: 15pt;
         padding-bottom: 5px;
       }
-      input.input {
+      input.input,div.block {
         width: 99%;
         height: 30pt;
         border: 3px solid #cbcbcb;
@@ -108,6 +122,12 @@
         font-weight: 900;
         color: white;
         padding-left: 10px;
+        line-height: 40px;
+        &.hidden{
+          height: 0;
+          margin-top: 0;
+          opacity: 0;
+        }
       }
       .checkbox {
         background-color: black;
@@ -139,6 +159,13 @@
           width: 40%;
         }
       }
+    }
+    .hidden-input {
+      position: absolute;
+      top:0;
+      height: 0;
+      margin-top: 0;
+      opacity: 0;
     }
     /* CHECKBOX */
     .control {
@@ -222,7 +249,9 @@
         name: 'Петр',
         middleName: 'Петрович',
         birthday: new Date(),
-        phone: '89117606036',
+        hiddenBirthday: '10121981',
+        phone: '9117606036',
+        hiddenPhone: '9117606036',
         email: 'petrov@mail.ru',
         fromwhere: 'Оттуда',
         translations: 'Eurosport',
@@ -240,6 +269,69 @@
       modal
     },
     computed: {
+      shownPhone: function(){
+        this.hiddenPhone = this.hiddenPhone.substr(0, 10);
+        this.hiddenPhone = this.hiddenPhone.replace(/\s+/g, '');
+        this.hiddenPhone = this.hiddenPhone.replace(/_+/g, '');
+        let resPhone = '';
+        let hp = this.hiddenPhone; // alias для скрытого поля телефона
+        resPhone = hp;
+        switch (hp.length) {
+          case 0: resPhone = `+7 ( _ _ _ ) _ _ _ - _ _ - _ _`; break;
+          case 1: resPhone = `+7 ( ${hp[0]} _ _ ) _ _ _ - _ _ - _ _`; break;
+          case 2: resPhone = `+7 ( ${hp[0]} ${hp[1]} _ ) _ _ _ - _ _ - _ _`; break;
+          case 3: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) _ _ _ - _ _ - _ _`; break;
+          case 4: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} _ _ - _ _ - _ _`; break;
+          case 5: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} _ - _ _ - _ _`; break;
+          case 6: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${hp[5]} - _ _ - _ _`; break;
+          case 7: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${hp[5]} - ${hp[6]} _ - _ _`; break;
+          case 8: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${hp[5]} - ${hp[6]} ${hp[7]} - _ _`; break;
+          case 9: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${hp[5]} - ${hp[6]} ${hp[7]} - ${hp[8]} _`; break;
+          case 10: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${hp[5]} - ${hp[6]} ${hp[7]} - ${hp[8]} ${hp[9]}`; break;
+          default: resPhone = `+7 ( _ _ _ ) _ _ _ - _ _ - _ _`; break;
+        }
+        return resPhone;
+      },
+      shownBirthday: function(){
+        this.hiddenBirthday = this.hiddenBirthday.substr(0, 8);
+        this.hiddenBirthday = this.hiddenBirthday.replace(/\s+/g, '');
+        this.hiddenBirthday = this.hiddenBirthday.replace(/_+/g, '');
+        let resBitrhday = '';
+        let hbd = this.hiddenBirthday; // alias для скрытого поля дня рождения
+        switch (hbd.length) {
+          case 0:
+            resBitrhday = `_ _ . _ _ . _ _ _ _`;
+            break;
+          case 1:
+            resBitrhday = `${hbd[0]} _ . _ _ . _ _ _ _`;
+            break;
+          case 2:
+            resBitrhday = `${hbd[0]} ${hbd[1]} . _ _ . _ _ _ _`;
+            break;
+          case 3:
+            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} _ . _ _ _ _`;
+            break;
+          case 4:
+            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${hbd[3]} . _ _ _ _`;
+            break;
+          case 5:
+            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${hbd[3]} . ${hbd[4]} _ _ _`;
+            break;
+          case 6:
+            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${hbd[3]} . ${hbd[4]} ${hbd[5]} _ _`;
+            break;
+          case 7:
+            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${hbd[3]} . ${hbd[4]} ${hbd[5]} ${hbd[6]} _`;
+            break;
+          case 8:
+            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${hbd[3]} . ${hbd[4]} ${hbd[5]} ${hbd[6]} ${hbd[7]}`;
+            break;
+          default:
+            resBitrhday = `_ _ . _ _ . _ _ _ _`;
+            break;
+        }
+        return resBitrhday;
+      },
       isShowSendButton: function () {
         const src = this.getReqFields();
         if (src.length === 0) return false;
@@ -253,6 +345,31 @@
       }
     },
     methods: {
+      getPhone(){
+        let resPhone = '8' + this.hiddenPhone.replace(/[^-0-9]/gim, '');
+        console.log(resPhone);
+        return resPhone;
+
+      },
+      getBirthDate(){
+        let resBirthDate = this.shownBirthday.replace(/\s+/g, '');
+        resBirthDate = resBirthDate.replace(/_+/g, '');
+        return resBirthDate;
+      },
+      setFocus(fieldName){
+        let el = '';
+        switch (fieldName){
+          case 'birthday':
+            el = document.getElementById('hiddenBirthday');
+            break;
+          case 'phone':
+            el = document.getElementById('hiddenPhone');
+            break;
+          default:
+            break;
+        }
+        el.focus();
+      },
       formatDate(date) {
         let month = String(date.getMonth() + 1);
         let day = String(date.getDate());
@@ -305,8 +422,8 @@
         const firstName = this.firstName;
         const middleName = this.middleName;
         const email = this.email;
-        const birthday = this.formatDate(new Date(this.birthday));
-        const phone = tel.replace(/[^0-9]/g, "");
+        const birthday = this.getBirthDate();//this.formatDate(new Date(this.birthday));
+        const phone = this.getPhone();//tel.replace(/[^0-9]/g, "");
         const fromwhere = this.fromwhere;
         const acceptSMS = this.acceptSMS;
         const acceptTranslations = this.acceptTranslations;
@@ -331,6 +448,27 @@
 
       sendData() {
         if (this.isShowSendButton) {
+          let err = false;
+          let obj = this.collectData();
+          // todo проверка на длину полей
+          if (obj.birthdate.length !== 10){
+            err = true;
+            this.modalText = 'Введена некорректная дата рождения';
+          }
+          if (obj.phone.length !== 11){
+            err = true;
+            this.modalText = 'Введен некорректный номер телефона';
+          }
+
+          if (err){
+            this.modalAlert = true;
+            this.modalTitle = 'Ошибка';
+            this.modalButton = true;
+            this.showModal = true;
+            return;
+          }
+
+
           this.ajaxSendData(this.collectData());
           this.showModal = true;
         } else {
@@ -339,12 +477,12 @@
       },
 
       ajaxSendData(obj) {
+        const ip = store.state.ip;
         const numADM = this.$router.currentRoute.params.numADM;
         obj.numADM = numADM;
         const params = obj;
         console.log(params);
-        //let url = `http://planshet:planshet@10.100.50.248/planshet_kl/hs/cardreg?`;
-        let url = `http://planshet:planshet@10.100.50.248/sms/upload.php?`;
+        let url = `http://planshet:planshet@${ip}/sms/upload.php?`;
         for (let prm in params) {
           //url += prm + '=' + params[prm] + '&';
         }
