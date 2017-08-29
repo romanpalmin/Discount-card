@@ -5,10 +5,10 @@
         ВВЕДИТЕ ПАРОЛЬ:
       </div>
       <div class="row-item input">
-        <input id="password" type="number" class="password-input" v-mask="'####'" placeholder="_ _ _ _"
-               v-model="currentPassword"/>
-       <!-- <div class="password-input block" @click="setFocus()" v-model="shownPass">{{shownPass}}</div>
-        <input type="number" class="hidden" id="passHidden" v-model="hiddenPass"/>-->
+        <!-- <input id="password" type="number" class="password-input" v-mask="'####'" placeholder="_ _ _ _"
+                v-model="currentPassword"/>-->
+        <div class="password-input block" @click="setFocus()" v-model="shownPass">{{shownPass}}</div>
+        <input type="number" class="hidden-input" id="passHidden" v-model="hiddenPass" maxlength="4"/>
       </div>
       <div class="row-item button">
         <button :class="continueButtonClass" @click="send()">продолжить</button>
@@ -28,6 +28,7 @@
 </template>
 <style scoped lang="less">
   .password-page-content {
+
     margin-top: 42%;
     .row-item {
       &.title {
@@ -36,11 +37,11 @@
         letter-spacing: 1px;
         font-family: IntroHeader;
       }
-      .hidden{
+      .hidden {
         opacity: 0;
       }
       &.input {
-        input, div {
+        div {
           height: 40pt;
           border: 3px solid #cbcbcb;
           border-radius: 8px;
@@ -51,8 +52,13 @@
           color: white;
           font-size: 25pt;
           font-weight: 900;
+          .hidden {
+            height: 0px;
+            margin-top: 0px;
+          }
           &.block {
-            margin: 0 auto;
+            margin: 20px auto 0;
+            line-height: 60px;
           }
 
         }
@@ -85,6 +91,11 @@
           font-weight: 900;
         }
       }
+      .hidden-input {
+        height: 0;
+        margin-top: 0;
+        opacity: 0;
+      }
     }
   }
 </style>
@@ -100,7 +111,7 @@
         name: 'this component',
         showPrompt: false,
         passwordLength: 4,
-        currentPassword: '',
+        /*currentPassword: '',*/
         hiddenPass: '',
         showModal: false,
         modalText: '',
@@ -117,7 +128,10 @@
         return this.isReadyButton ? 'ready' : 'not-ready';
       },
       numADM: function () {
-        let password = this.currentPassword;
+        this.hiddenPass = this.hiddenPass.substr(0, 4);
+        this.hiddenPass = this.hiddenPass.replace(/\s+/g, '');
+        this.hiddenPass = this.hiddenPass.replace(/_+/g, '');
+        let password = this.hiddenPass;
         password = password.replace(/\s+/g, '');
         password = password.replace(/_+/g, '');
         return password;
