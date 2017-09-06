@@ -63,7 +63,7 @@
       z-index: 9999;
       background-color: black;
       .menu {
-        display: none;
+        /*display: none;*/
         .pages-nav {
           display: flex;
           -webkit-flex-wrap: wrap;

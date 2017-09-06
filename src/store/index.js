@@ -6,7 +6,7 @@ export default {
     ws: 'planshet',
     /*ws: 'planshet_kl',*/
     ip: '10.10.182.11'
-    //ip: '10.100.50.248'
+    /*ip: '10.100.50.248'*/
   },
   setNumADM(newValue){
     if (this.isDebug) console.log('setNumADM вызвано c ', newValue);

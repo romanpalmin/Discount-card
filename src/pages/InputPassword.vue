@@ -22,6 +22,7 @@
              :alertTitle="modalTitle"
              :showButton="modalButton"
              :showAlert="modalAlert"
+             :showPreloader="showPreloader"
       />
     </div>
   </div>
@@ -100,8 +101,6 @@
   }
 </style>
 <script>
-  import InputMask from 'inputmask';
-  import MaskedInput from 'vue-masked-input';
   import modal from '../components/modal.vue';
   import store from '../store';
 
@@ -117,7 +116,8 @@
         modalText: '',
         modalTitle: '',
         modalButton: false,
-        modalAlert: false
+        modalAlert: false,
+        showPreloader: false
       }
     },
     computed: {
@@ -163,13 +163,8 @@
       }
     },
     mounted() {
-      const passwordMask = new InputMask("9 9 9 9", {colorMask: true, inputEventOnly: true});
-      InputMask.extendDefaults({androidHack: "rtfm"});
-      const password = document.getElementById("password");
-      //passwordMask.mask(password);
-    },
+          },
     components: {
-      'masked-input': MaskedInput,
       modal
     },
     methods: {
@@ -190,7 +185,6 @@
       },
 
       ajaxSend(numADM) {
-        //http://10.100.50.248/planshet_kl/hs/cardreg?numADM=11112&check=1
         const params = {numADM, 'check': 1};
         const ip = store.state.ip;
         const ws = store.state.ws;
@@ -200,11 +194,13 @@
           url += prm + '=' + params[prm] + '&';
         }
         url += 'image=1';
-        console.log(url);
+        this.showPreloader = true;
         this.showModal = true;
+        this.modalAlert = true;
         this.axios.post(url, {data: ''})
           .then(resp => {
             this.showModal = false;
+            this.showPreloader = false;
             console.log(resp);
             if (resp.status === 200) {
               let pathName = 'InputForm';
@@ -216,6 +212,7 @@
                 this.modalTitle = 'Ошибка';
                 this.modalButton = true;
                 this.showModal = true;
+                this.showPreloader = false;
               }
             }
           })
@@ -226,6 +223,7 @@
             this.modalTitle = 'Ошибка';
             this.modalButton = true;
             this.showModal = true;
+            this.showPreloader = false;
             // todo удалить
             //let pathName = 'InputForm';
             //this.$router.replace({name: pathName, params: {lang: 'ru', numADM: numADM}});

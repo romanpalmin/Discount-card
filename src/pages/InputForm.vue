@@ -24,32 +24,29 @@
           <input class="input" name="middleName" id="middleName" v-model="middleName"/>
         </div>
       </div>
-     <!-- <div class="row-item">
-        <div class="title">Дата рождения0</div>
-        <div class="input">&lt;!&ndash;v-mask="'##.##.####'"&ndash;&gt;
-          <input class="input" type="date" name="birthday" id="birthday" v-model="birthday"
-                 placeholder="_ _ . _ _ . _ _ _ _"/>
-        </div>
-      </div>-->
+      <!-- <div class="row-item">
+         <div class="title">Дата рождения0</div>
+         <div class="input">&lt;!&ndash;v-mask="'##.##.####'"&ndash;&gt;
+           <input class="input" type="date" name="birthday" id="birthday" v-model="birthday"
+                  placeholder="_ _ . _ _ . _ _ _ _"/>
+         </div>
+       </div>-->
       <div class="row-item">
         <div class="title">Дата рождения</div>
         <div class="input">
-          <div class="birthdate-input block" @click="setFocus('birthday')" v-model="shownBirthday">{{shownBirthday}}</div>
-          <input class="input hidden-input" type="number" name="birthday" id="hiddenBirthday" v-model="hiddenBirthday"/>
+          <div class="birthdate-input block" :class="{ selected: focusBirthdate }" @click="setFocus('birthday')"
+               v-model="shownBirthday" v-html="shownBirthday"></div>
+          <input class="input hidden-input" @focusout="hideFocus('birthday')" type="number" name="birthday"
+                 id="hiddenBirthday" v-model="hiddenBirthday"/>
         </div>
       </div>
-      <!--<div class="row-item">
-        <div class="title">Телефон</div>
-        <div class="input">&lt;!&ndash;v-mask="'+7(###)###-##-##'"&ndash;&gt;
-          <input class="input" name="phone" id="phone" type="tel" v-model="phone"
-                 placeholder="+7 (_ _ _) _ _ _ - _ _ - _ _"/>
-        </div>
-      </div>-->
       <div class="row-item">
         <div class="title">Телефон</div>
         <div class="input">
-          <div class="phone-input block" @click="setFocus('phone')" v-model="shownPhone">{{shownPhone}}</div>
-          <input class="input hidden-input" name="phone" id="hiddenPhone" type="number" v-model="hiddenPhone" />
+          <div class="phone-input block" :class="{ selected: focusPhone }" @click="setFocus('phone')"
+               v-model="shownPhone" v-html="shownPhone"></div>
+          <input class="input hidden-input" name="phone" id="hiddenPhone" @focusout="hideFocus('phone')" type="number"
+                 v-model="hiddenPhone"/>
         </div>
       </div>
       <div class="row-item">
@@ -95,10 +92,25 @@
            :alertTitle="modalTitle"
            :showButton="modalButton"
            :showAlert="modalAlert"
+           :showPreloader="modalPreloader"
     />
   </div>
 </template>
 <style scoped lang="less">
+  .blink {
+    color: red;
+    display: none;
+  }
+
+  @keyframes blink {
+    50% {
+      color: rgb(34, 34, 34);
+    }
+    100% {
+      color: rgba(34, 34, 34, 0);
+    }
+  }
+
   .form-page-content {
     margin-top: 0px;
     .row-item {
@@ -111,7 +123,7 @@
         font-size: 15pt;
         padding-bottom: 5px;
       }
-      input.input,div.block {
+      input.input, div.block {
         width: 99%;
         height: 30pt;
         border: 3px solid #cbcbcb;
@@ -123,10 +135,13 @@
         color: white;
         padding-left: 10px;
         line-height: 40px;
-        &.hidden{
+        &.hidden {
           height: 0;
           margin-top: 0;
           opacity: 0;
+        }
+        &.selected {
+          border: 3px solid #b3924e;
         }
       }
       .checkbox {
@@ -162,7 +177,7 @@
     }
     .hidden-input {
       position: absolute;
-      top:0;
+      top: 0;
       height: 0;
       margin-top: 0;
       opacity: 0;
@@ -245,16 +260,16 @@
   export default {
     data() {
       return {
-        firstName: 'Петров',
-        name: 'Петр',
-        middleName: 'Петрович',
+        firstName: '',
+        name: '',
+        middleName: '',
         birthday: new Date(),
-        hiddenBirthday: '10121981',
-        phone: '9117606036',
-        hiddenPhone: '9117606036',
-        email: 'petrov@mail.ru',
-        fromwhere: 'Оттуда',
-        translations: 'Eurosport',
+        hiddenBirthday: '',
+        phone: '',
+        hiddenPhone: '',
+        email: '',
+        fromwhere: '',
+        translations: '',
         acceptSMS: true,
         acceptTranslations: true,
         imgBase64: 0,
@@ -262,7 +277,11 @@
         modalText: '',
         modalTitle: '',
         modalButton: false,
-        modalAlert: false
+        modalAlert: false,
+        modalPreloader: false,
+        focusBirthdate: false,
+        focusPhone: false,
+        cursorChar: '|'
       }
     },
     components: {
@@ -276,18 +295,20 @@
         let resPhone = '';
         let hp = this.hiddenPhone; // alias для скрытого поля телефона
         resPhone = hp;
+        let cursor = `<span id="blinkedPhone" class="blink hidden" style=" line-height: 20pt; color: gray; animation-name: blink; animation-duration: 1s; animation-iteration-count: infinite; display:none">${this.cursorChar}</span>`;
+        let cursorNext = `<span id="blinkedPhone" class="blink hidden" style=" color: gray; animation-name: blink; animation-duration: 1s; animation-iteration-count: infinite; display:''">${this.cursorChar}</span>`;
         switch (hp.length) {
-          case 0: resPhone = `+7 ( _ _ _ ) _ _ _ - _ _ - _ _`; break;
-          case 1: resPhone = `+7 ( ${hp[0]} _ _ ) _ _ _ - _ _ - _ _`; break;
-          case 2: resPhone = `+7 ( ${hp[0]} ${hp[1]} _ ) _ _ _ - _ _ - _ _`; break;
-          case 3: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) _ _ _ - _ _ - _ _`; break;
-          case 4: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} _ _ - _ _ - _ _`; break;
-          case 5: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} _ - _ _ - _ _`; break;
-          case 6: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${hp[5]} - _ _ - _ _`; break;
-          case 7: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${hp[5]} - ${hp[6]} _ - _ _`; break;
-          case 8: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${hp[5]} - ${hp[6]} ${hp[7]} - _ _`; break;
-          case 9: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${hp[5]} - ${hp[6]} ${hp[7]} - ${hp[8]} _`; break;
-          case 10: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${hp[5]} - ${hp[6]} ${hp[7]} - ${hp[8]} ${hp[9]}`; break;
+          case 0: resPhone = `+7 ( ` + cursor + `_ _ _ ) _ _ _ - _ _ - _ _`; break;
+          case 1: resPhone = `+7 ( ${hp[0]} ${cursorNext}_ _ ) _ _ _ - _ _ - _ _`; break;
+          case 2: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${cursorNext}_ ) _ _ _ - _ _ - _ _`; break;
+          case 3: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${cursorNext}_ _ _ - _ _ - _ _`; break;
+          case 4: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${cursorNext}_ _ - _ _ - _ _`; break;
+          case 5: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${cursorNext}_ - _ _ - _ _`; break;
+          case 6: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${hp[5]} - ${cursorNext}_ _ - _ _`; break;
+          case 7: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${hp[5]} - ${hp[6]} ${cursorNext}_ - _ _`; break;
+          case 8: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${hp[5]} - ${hp[6]} ${hp[7]} - ${cursorNext}_ _`; break;
+          case 9: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${hp[5]} - ${hp[6]} ${hp[7]} - ${hp[8]} ${cursorNext}_`; break;
+          case 10: resPhone = `+7 ( ${hp[0]} ${hp[1]} ${hp[2]} ) ${hp[3]} ${hp[4]} ${hp[5]} - ${hp[6]} ${hp[7]} - ${hp[8]} ${hp[9]}${cursorNext}`; break;
           default: resPhone = `+7 ( _ _ _ ) _ _ _ - _ _ - _ _`; break;
         }
         return resPhone;
@@ -298,33 +319,35 @@
         this.hiddenBirthday = this.hiddenBirthday.replace(/_+/g, '');
         let resBitrhday = '';
         let hbd = this.hiddenBirthday; // alias для скрытого поля дня рождения
+        let cursor = `<span id="blinkedBirthday" style="color: gray; animation-name: blink; animation-duration: 1s; animation-iteration-count: infinite; display:none">${this.cursorChar}</span>`;
+        let cursorNext = `<span id="blinkedBirthday" style="color: gray; animation-name: blink; animation-duration: 1s; animation-iteration-count: infinite; display:''">${this.cursorChar}</span>`;
         switch (hbd.length) {
           case 0:
-            resBitrhday = `_ _ . _ _ . _ _ _ _`;
+            resBitrhday = cursor + `_ _ . _ _ . _ _ _ _`;
             break;
           case 1:
-            resBitrhday = `${hbd[0]} _ . _ _ . _ _ _ _`;
+            resBitrhday = `${hbd[0]} ${cursorNext}_ . _ _ . _ _ _ _`;
             break;
           case 2:
-            resBitrhday = `${hbd[0]} ${hbd[1]} . _ _ . _ _ _ _`;
+            resBitrhday = `${hbd[0]} ${hbd[1]} .${cursorNext} _ _ . _ _ _ _`;
             break;
           case 3:
-            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} _ . _ _ _ _`;
+            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${cursorNext}_ . _ _ _ _`;
             break;
           case 4:
-            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${hbd[3]} . _ _ _ _`;
+            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${hbd[3]} . ${cursorNext}_ _ _ _`;
             break;
           case 5:
-            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${hbd[3]} . ${hbd[4]} _ _ _`;
+            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${hbd[3]} . ${hbd[4]} ${cursorNext}_ _ _`;
             break;
           case 6:
-            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${hbd[3]} . ${hbd[4]} ${hbd[5]} _ _`;
+            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${hbd[3]} . ${hbd[4]} ${hbd[5]} ${cursorNext}_ _`;
             break;
           case 7:
-            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${hbd[3]} . ${hbd[4]} ${hbd[5]} ${hbd[6]} _`;
+            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${hbd[3]} . ${hbd[4]} ${hbd[5]} ${hbd[6]} ${cursorNext}_`;
             break;
           case 8:
-            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${hbd[3]} . ${hbd[4]} ${hbd[5]} ${hbd[6]} ${hbd[7]}`;
+            resBitrhday = `${hbd[0]} ${hbd[1]} . ${hbd[2]} ${hbd[3]} . ${hbd[4]} ${hbd[5]} ${hbd[6]} ${hbd[7]}${cursorNext}`;
             break;
           default:
             resBitrhday = `_ _ . _ _ . _ _ _ _`;
@@ -352,23 +375,51 @@
 
       },
       getBirthDate(){
-        let resBirthDate = this.shownBirthday.replace(/\s+/g, '');
-        resBirthDate = resBirthDate.replace(/_+/g, '');
+        let resBirthDate = this.shownBirthday.substr(0, 19);
+        resBirthDate = resBirthDate.replace(/\s+/g, '');
+
+        console.log(resBirthDate);
+        resBirthDate = resBirthDate.replace(/^-0-9/gim, '');
+        console.log(resBirthDate);
         return resBirthDate;
       },
       setFocus(fieldName){
         let el = '';
+        let elCursor = '';
         switch (fieldName){
           case 'birthday':
+            this.focusBirthdate = true;
             el = document.getElementById('hiddenBirthday');
+            elCursor = document.getElementById('blinkedBirthday');
+            elCursor.style.display = '';
             break;
           case 'phone':
+            this.focusPhone = true;
             el = document.getElementById('hiddenPhone');
+            elCursor = document.getElementById('blinkedPhone');
+            elCursor.style.display = '';
             break;
           default:
             break;
         }
         el.focus();
+      },
+      hideFocus(fieldName){
+        let elCursor = '';
+        switch (fieldName){
+          case 'birthday':
+            this.focusBirthdate = false;
+            elCursor = document.getElementById('blinkedBirthday');
+            elCursor.style.display = 'none';
+            break;
+          case 'phone':
+            this.focusPhone = false;
+            elCursor = document.getElementById('blinkedPhone');
+            elCursor.style.display = 'none';
+            break;
+          default:
+            break;
+        }
       },
       formatDate(date) {
         let month = String(date.getMonth() + 1);
@@ -464,13 +515,16 @@
             this.modalAlert = true;
             this.modalTitle = 'Ошибка';
             this.modalButton = true;
+            this.modalPreloader = false;
             this.showModal = true;
             return;
           }
 
-
-          this.ajaxSendData(this.collectData());
+          this.modalPreloader = true;
           this.showModal = true;
+          this.modalAlert = true;
+          this.ajaxSendData(this.collectData());
+
         } else {
           console.log('Не заполнены обязательные поля');
         }
@@ -520,6 +574,7 @@
             this.modalTitle = 'Ошибка';
             this.modalButton = true;
             this.showModal = true;
+            this.showPreloader = false;
           })
 
 
@@ -567,4 +622,9 @@
       InputMask({alias: "email"}).mask(email);*/
     }
   }
+
+
+
+
+
 </script>

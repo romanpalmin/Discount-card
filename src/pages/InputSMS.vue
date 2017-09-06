@@ -5,15 +5,22 @@
         ВВЕДИТЕ КОД ИЗ SMS:
       </div>
       <div class="row-item input">
-        <input id="password" type="number" class="password-input"  v-model="currentPassword"/>
+        <input id="password" type="number" class="password-input" v-model="currentPassword"/>
       </div>
       <div class="row-item button">
         <button :class="continueButtonClass" @click="send()">продолжить</button>
       </div>
       <div class="row-item prompt">
-        <span v-if="showPrompt">Неправильный пароль</span>
+        <span v-if="showPrompt">Неправильный код из СМС</span>
       </div>
-      <modal v-if="showModal" :isLoader=true alertText="test" :showButton=true :showAlert=false />
+      <modal v-if="showModal"
+             :isLoader=true
+             :alertText="modalText"
+             :alertTitle="modalTitle"
+             :showButton="modalButton"
+             :showAlert="modalAlert"
+             :showPreloader="modalPreloader"
+      />
     </div>
   </div>
 </template>
@@ -84,7 +91,11 @@
         showPrompt: false,
         passwordLength: 4,
         currentPassword: '',
-        showModal: false
+        modalText: '',
+        modalTitle: '',
+        modalButton: false,
+        modalAlert: false,
+        modalPreloader: false,
       }
     },
     computed: {
@@ -122,6 +133,9 @@
       },
 
       ajaxSend(smsCode) {
+        this.modalPreloader = true;
+        this.showModal = true;
+        this.modalAlert = true;
         const numADM = this.$router.currentRoute.params.numADM;
         //http://10.100.50.248/planshet_kl/hs/cardreg?numADM=11112&check=1
         const params = {codSMS: smsCode, 'check': 1, numADM};
@@ -133,20 +147,23 @@
           url += prm + '=' + params[prm] + '&';
         }
 
-        console.log(url);
         this.showModal = true;
         this.axios.post(url, {data: ''})
           .then(resp => {
             console.log(resp);
             if (resp.status === 200) {
+              this.modalPreloader = false;
               this.showModal = false;
+              this.modalAlert = false;
               let pathName = 'Thanks';
               this.$router.replace({name: pathName, params: {lang: 'ru'}});
             }
           })
           .catch(err => {
             console.log(err);
+            this.modalPreloader = false;
             this.showModal = false;
+            this.modalAlert = false;
             // todo удалить
             let pathName = 'Thanks';
             this.$router.replace({name: pathName, params: {lang: 'ru'}});
@@ -155,4 +172,5 @@
       }
     }
   }
+
 </script>

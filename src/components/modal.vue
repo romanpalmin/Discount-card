@@ -6,6 +6,7 @@
     <div class="main-modal" v-if="showAlert">
       <div class="modal-page-content">
         <div class="header1" v-if="title && title.length > 0">{{title}}</div>
+        <div class="header2" v-if="isPreloader"><img class="img-spinner" :src="getImg('spinner')" /></div>
         <hr/>
         <div class="header2">
           {{message}}
@@ -54,6 +55,10 @@
       .header2 {
         font-size: 23pt;
         padding: 20px;
+        img{
+          width: 30px;
+          height: 30px;
+        }
       }
       .modal-buttons {
         button {
@@ -78,11 +83,16 @@
     methods:{
       accept(){
         this.$parent.showModal = false;
-        this.$parent.modalAlert = false;
+        this.$parent.modalAlert = true;
         this.$parent.modalText = '';
         this.$parent.modalTitle = '';
         this.$parent.modalButton = false;
-      }
+        this.$parent.showPreloader = false;
+      },
+      getImg(name) {
+        let src = 'http://10.10.182.11/img/' + name + '.gif';
+        return src;
+      },
     },
     computed: {
       showCallbackButton: function () {
@@ -93,10 +103,14 @@
       },
       message: function(){
         return this.alertText;
+      },
+      isPreloader: function(){
+        return this.showPreloader;
       }
     },
     mounted() {
+      console.log(this.showPreloader);
     },
-    props: ['isLoader', 'alertText', 'showButton', 'showAlert', 'alertTitle']
+    props: ['isLoader', 'alertText', 'showButton', 'showAlert', 'alertTitle', 'showPreloader']
   }
 </script>
