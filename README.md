@@ -1,8 +1,32 @@
-# discount-cart
+### Project description / Описание проекта
 
-> Discount cart for street food bar
+#### ENG
+#### System of automatic generation of discount cards
+Application features:
+- allows the guest of the restaurant to fill in personal data,
+- check the possibility of receiving a guest discount card via SMS,
+- takes a photo of the guest,
+- if the data is success, sends data to the discount card printing printer
 
-## Build Setup
+#### RUS
+#### Систем автоматической генерации дисконтных карт
+Приложение:
+- позволяет гостю ресторана заполнить анкетные данные,
+- проверяет возможность получения гостем скидочной карты через СМС,
+- делает фотоснимок гостя,
+- при успешной проверке данных и возможности получения, отправляет данные на принтер печати дисконтной карты
+---
+### Technologies used / Использованные технологии:
+- Language: **JavaScript** (**ES5**, **ES2015+**)
+- Framework: **Vue**
+- XHR: **axios**, **vue-axios** (REST API)
+- Store: **Vuex**
+- Css-preprocessor: **Less**
+- Build: **webpack** + **gulp** + **babel**
+
+
+
+## Build Setup / Сборка проекта
 
 ``` bash
 # install dependencies
