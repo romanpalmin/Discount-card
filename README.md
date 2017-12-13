@@ -22,7 +22,7 @@ Application features:
 - XHR: **axios**, **vue-axios** (REST API)
 - Store: **Vuex**
 - Css-preprocessor: **Less**
-- Build: **webpack** + **gulp** + **babel**
+- Build: **webpack** + **babel**
 
 
 
